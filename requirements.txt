@@ -2,9 +2,11 @@ langchain>=0.1.14
 langgraph>=0.0.20
 openai>=1.25.1
 faiss-cpu>=1.7.4
+langchain-community
 tiktoken
 python-docx
 pytube
+
 youtube-transcript-api
 unstructured
 beautifulsoup4
