@@ -76,9 +76,8 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# --- Sidebar theme toggle ---
+
 Theme = st.sidebar.selectbox("🌗 Select Theme", ["Dark", "Azure", "Tree", "Sunset","Moon"])
-# Define colors based on theme
 if Theme == "Dark":
     bg_color = "#0e1117"
     text_color = "#ffffff"
@@ -113,13 +112,13 @@ st.markdown(
 )
 
 
-# Load environment variables
+
 load_dotenv()
 
 
 
 
-# Sidebar - API Key input
+
 st.sidebar.markdown("## 🔐 Enter API Key")
 with st.sidebar:
     groq_api_key = st.text_input("🔑 Groq API Key", value=os.getenv("GROQ_API_KEY", ""), type="password")
@@ -136,13 +135,13 @@ st.sidebar.markdown("""
 5. Upload Correct URL from Youtube video """)
 
 
-# LLM and embeddings
+
 llm = ChatGroq(model="llama-3.1-8b-instant", groq_api_key=groq_api_key)
 embeddings = OllamaEmbeddings(model="nomic-embed-text")
 tab1, tab2 = st.tabs(["DOCUMENTS", "YOUTUBE"])
 with tab1:
   st.header("DOCUMENT")
-# File upload + option select
+
   uploaded_files = st.file_uploader("📂 Upload a Document", type=["pdf", "pptx", "txt", "docx"],accept_multiple_files=True)
 
   option = st.radio("Choose an option", ["Generate Summary", "Generate MCQs", "Ask a Question","Translate summary"])
@@ -170,15 +169,15 @@ with tab1:
             st.stop()
         all_docs.extend(docs)
 
-        # Split into chunks
+      
     splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=50)
     all_chunks = splitter.split_documents(all_docs)
         
-        # Create vector store & retriever
+     
     vectorstore = FAISS.from_documents(all_chunks, embeddings)
     retriever = vectorstore.as_retriever()
 
-        # Process user selection
+        
     if option == "Generate Summary":
             joined_text = "\n".join([doc.page_content for doc in all_chunks])
             prompt = PromptTemplate(
@@ -257,7 +256,6 @@ with tab1:
 
 
 
-# === YOUTUBE TAB ===
 with tab2:
     st.header("YOUTUBE")
     st.subheader("Paste a YouTube or Website URL below to get a summary:")
@@ -281,11 +279,11 @@ with tab2:
                 chain = load_summarize_chain(llm, chain_type='stuff', prompt=prompt)
                 output_summary = chain.run(docs)
 
-                st.success("✅ Summary:")
+                st.success("Summary:")
                 st.write(output_summary)
 
         except Exception as e:
-            st.exception(f"⚠️ Exception: {e}")
+            st.exception(f"Exception: {e}")
 
     prompt_template2 = """
     Generate 10 multiple choice questions using the following content from a video or webpage transcript:
@@ -306,12 +304,12 @@ with tab2:
                 chain2 = prompt2 | llm
                 result = chain2.invoke({"text": combined_text})
 
-                st.success("✅ Multiple Choice Questions:")
+                st.success(" Multiple Choice Questions:")
                 st.write(result.content)
         except Exception as e:
-            st.exception(f"⚠️ Exception: {e}")
+            st.exception(f"Exception: {e}")
 
-   # === Setup memory and conversation chain once ===
+
 if "chat_memory" not in st.session_state:
     st.session_state.chat_memory = ConversationBufferMemory(return_messages=True)
 if "conversation" not in st.session_state:    
@@ -321,10 +319,10 @@ if "conversation" not in st.session_state:
         verbose=False
     )
 
-# === Show input box and trigger on button click ===
+
 st.markdown("# 🤖 NEUROBUDDY" )
 question = st.text_input("Chat with NeuroBuddy")
-if st.button("Submit Question 🚀") and question:
+if st.button("Submit Question ") and question:
     with st.spinner("Thinking..."):
         response = st.session_state.conversation.run(question)
         st.markdown(f"**Answer:** {response}")
@@ -333,9 +331,9 @@ if st.session_state.chat_memory:
     st.markdown("### 🧠 Chat History")
     for msg in st.session_state.chat_memory.chat_memory.messages:
         if msg.type == "human":
-            st.markdown(f"🧑‍💻 **You**: {msg.content}")
+            st.markdown(f"🧑‍💻 You: {msg.content}")
         elif msg.type == "ai":
-            st.markdown(f"🤖 **Bot**: {msg.content}")
+            st.markdown(f"🤖 Bot: {msg.content}")
 if st.button("🧹 Clear Chat History"):
     st.session_state.chat_memory.clear()
     st.success("Chat history cleared.")
