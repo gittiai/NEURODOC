@@ -9,6 +9,7 @@ from langchain_community.document_loaders import (
     UnstructuredWordDocumentLoader,
     UnstructuredURLLoader
 )
+from dotenv import load_dotenv
 from langchain_community.document_loaders import DirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
@@ -17,30 +18,18 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.documents import Document
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_ollama import OllamaEmbeddings
 from langchain_groq import ChatGroq
 from youtube_transcript_api import YouTubeTranscriptApi
-from urllib.parse import urlparse, parse_qs
 import streamlit as st
-from fpdf import FPDF
-import io
+load_dotenv()
 
-def load_youtube_transcript(url: str):
-    try:
-        video_id = parse_qs(urlparse(url).query).get("v")
-        if not video_id:
-            raise ValueError("Invalid YouTube URL format.")
-        transcript = YouTubeTranscriptApi.get_transcript(video_id[0])
-        text = " ".join([t['text'] for t in transcript])
-        return [Document(page_content=text)]
-    except Exception as e:
-        raise RuntimeError(f"Transcript fetch failed: {e}")
 
-   
-     
-   
-#st.sidebar.image("/Users/adityashivhare/Downloads/python_project/portfolio/—Pngtree—strongest brain head illustration_4521000.png", width=250)   
+gemini_api_key = os.getenv("GEMINI_API_KEY")
+os.environ["GOOGLE_API_KEY"] = gemini_api_key
+ 
 st.sidebar.markdown(
     "<div style='font-size: 32px; text-align: center;'>🅝🅔🅤🅡🅞🅓🅞🅒</div>",
     unsafe_allow_html=True
@@ -76,8 +65,9 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
+# --- Sidebar theme toggle ---
 Theme = st.sidebar.selectbox("🌗 Select Theme", ["Dark", "Azure", "Tree", "Sunset","Moon"])
+# Define colors based on theme
 if Theme == "Dark":
     bg_color = "#0e1117"
     text_color = "#ffffff"
@@ -116,9 +106,6 @@ st.markdown(
 load_dotenv()
 
 
-
-
-
 st.sidebar.markdown("## 🔐 Enter API Key")
 with st.sidebar:
     groq_api_key = st.text_input("🔑 Groq API Key", value=os.getenv("GROQ_API_KEY", ""), type="password")
@@ -137,8 +124,8 @@ st.sidebar.markdown("""
 
 
 llm = ChatGroq(model="llama-3.1-8b-instant", groq_api_key=groq_api_key)
-embeddings = OllamaEmbeddings(model="nomic-embed-text")
-tab1, tab2 = st.tabs(["DOCUMENTS", "YOUTUBE"])
+embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+tab1, tab2 = st.tabs(["DOCUMENTS", "WEBSITE"])
 with tab1:
   st.header("DOCUMENT")
 
@@ -155,7 +142,7 @@ with tab1:
             tmp.write(uploaded_file.read())
             filepath = tmp.name
 
-        # Load the file
+        
         if uploaded_file.name.endswith(".pdf"):
             docs = PyPDFLoader(filepath).load()
         elif uploaded_file.name.endswith(".pptx"):
@@ -169,7 +156,7 @@ with tab1:
             st.stop()
         all_docs.extend(docs)
 
-      
+
     splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=50)
     all_chunks = splitter.split_documents(all_docs)
         
@@ -256,10 +243,12 @@ with tab1:
 
 
 
+
 with tab2:
-    st.header("YOUTUBE")
-    st.subheader("Paste a YouTube or Website URL below to get a summary:")
-    generic_url = st.text_input("URL", label_visibility="collapsed", placeholder="Enter a YouTube or Website URL")
+    st.header("WEBSITE")
+    st.subheader("Paste a Website URL below to get a summary:")
+    generic_url = st.text_input("URL", label_visibility="collapsed", placeholder="Enter a  Website URL")
+    
 
     prompt_template = """
     Provide a concise and clear summary of the following content in approximately 300 words:
@@ -267,26 +256,23 @@ with tab2:
     """
     prompt = PromptTemplate(template=prompt_template, input_variables=['text'])
 
-    if st.button("Summarize the content from YT or Website 📝"):
+    if st.button("Summarize the content from Website 📝"):
         try:
             with st.spinner("⏳ Loading and summarizing content..."):
-                if "youtube.com" in generic_url:
-                   docs = load_youtube_transcript(generic_url)
-                else:
-                 loader = UnstructuredURLLoader(urls=[generic_url])
-                 docs = loader.load()
+                loader = UnstructuredURLLoader(urls=[generic_url])
+                docs = loader.load()
 
                 chain = load_summarize_chain(llm, chain_type='stuff', prompt=prompt)
                 output_summary = chain.run(docs)
 
-                st.success("Summary:")
+                st.success("✅ Summary:")
                 st.write(output_summary)
 
         except Exception as e:
-            st.exception(f"Exception: {e}")
+            st.exception(f"⚠️ Exception: {e}")
 
     prompt_template2 = """
-    Generate 10 multiple choice questions using the following content from a video or webpage transcript:
+    Generate 10 multiple choice questions using the following content from a  webpage transcript:
     Content: {text}
     """
     prompt2 = PromptTemplate(template=prompt_template2, input_variables=['text'])
@@ -294,20 +280,17 @@ with tab2:
     if st.button("Generate MCQs 🔠"):
         try:
             with st.spinner("⏳ Loading and generating MCQs..."):
-                if "youtube.com" in generic_url:
-                    docs = load_youtube_transcript(generic_url)
-                else:
-                    loader = UnstructuredURLLoader(urls=[generic_url])
-                    docs = loader.load()
+                loader = UnstructuredURLLoader(urls=[generic_url])
+                docs = loader.load()
 
                 combined_text = "\n\n".join([doc.page_content for doc in docs])
                 chain2 = prompt2 | llm
                 result = chain2.invoke({"text": combined_text})
 
-                st.success(" Multiple Choice Questions:")
+                st.success("✅ Multiple Choice Questions:")
                 st.write(result.content)
         except Exception as e:
-            st.exception(f"Exception: {e}")
+            st.exception(f"⚠️ Exception: {e}")
 
 
 if "chat_memory" not in st.session_state:
@@ -319,21 +302,20 @@ if "conversation" not in st.session_state:
         verbose=False
     )
 
-
 st.markdown("# 🤖 NEUROBUDDY" )
 question = st.text_input("Chat with NeuroBuddy")
-if st.button("Submit Question ") and question:
+if st.button("Submit Question 🚀") and question:
     with st.spinner("Thinking..."):
         response = st.session_state.conversation.run(question)
         st.markdown(f"**Answer:** {response}")
-
-if st.session_state.chat_memory:
-    st.markdown("### 🧠 Chat History")
+with st.expander("🧠 Chat History", expanded=False):
+ if st.session_state.chat_memory:
     for msg in st.session_state.chat_memory.chat_memory.messages:
+
         if msg.type == "human":
             st.markdown(f"🧑‍💻 You: {msg.content}")
         elif msg.type == "ai":
-            st.markdown(f"🤖 Bot: {msg.content}")
+            st.markdown(f"🤖 Neurobuddy: {msg.content}")
 if st.button("🧹 Clear Chat History"):
     st.session_state.chat_memory.clear()
     st.success("Chat history cleared.")
