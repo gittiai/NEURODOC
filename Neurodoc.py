@@ -18,10 +18,14 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.documents import Document
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
+from langchain.chains import RetrievalQA
+from langchain_google_genai import GoogleGenerativeAI
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_ollama import OllamaEmbeddings
 from langchain_groq import ChatGroq
+from PIL import Image
+import google.generativeai as genai
 from youtube_transcript_api import YouTubeTranscriptApi
 import streamlit as st
 load_dotenv()
@@ -65,9 +69,8 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# --- Sidebar theme toggle ---
 Theme = st.sidebar.selectbox("🌗 Select Theme", ["Dark", "Azure", "Tree", "Sunset","Moon"])
-# Define colors based on theme
+
 if Theme == "Dark":
     bg_color = "#0e1117"
     text_color = "#ffffff"
@@ -125,7 +128,7 @@ st.sidebar.markdown("""
 
 llm = ChatGroq(model="llama-3.1-8b-instant", groq_api_key=groq_api_key)
 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-tab1, tab2 = st.tabs(["DOCUMENTS", "WEBSITE"])
+tab1, tab2 ,tab3 = st.tabs(["DOCUMENTS", "WEBSITE" ,"IMAGE"])
 with tab1:
   st.header("DOCUMENT")
 
@@ -301,6 +304,43 @@ if "conversation" not in st.session_state:
         memory=st.session_state.chat_memory,
         verbose=False
     )
+    
+with tab3:
+    os.environ["GOOGLE_API_KEY"] = os.getenv("GEMINI_API_KEY")
+    genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+
+
+    st.title(" IMAGE ")
+
+    uploaded_file = st.file_uploader("📄 Upload an image", type=["jpg", "jpeg", "png"])
+    question = st.text_input("💬 Ask a question about the image")
+
+    if uploaded_file and question:
+     image = Image.open(uploaded_file)
+     st.image(image,use_container_width=True)
+
+     model = genai.GenerativeModel("gemini-2.5-pro")
+
+     response = model.generate_content(
+        ["Extract all useful and meaningful information from this image.", image],
+        stream=False
+     )
+     extracted_text = response.text
+     st.code(extracted_text, language="markdown")
+
+     splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+     docs = splitter.split_text(extracted_text)
+
+     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+     vectordb = FAISS.from_texts(docs, embedding=embeddings)
+
+     llm = GoogleGenerativeAI(model="gemini-2.5-pro")
+     retriever=vectordb.as_retriever()
+     qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
+
+   
+     answer = qa_chain.run(question)
+     st.write(answer)
 
 st.markdown("# 🤖 NEUROBUDDY" )
 question = st.text_input("Chat with NeuroBuddy")
