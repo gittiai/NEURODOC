@@ -122,7 +122,7 @@ st.sidebar.markdown("""
    - Ask a Question
 3. For Q&A, type your question in the box.
 4. Use this prompt->(Answer the question using the context provided, and include the file name and page number as the source)  to find file name and page no            
-5. Upload Correct URL from Youtube video """)
+5. You can also Upload Image for Q/A """)
 
 
 
