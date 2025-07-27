@@ -30,10 +30,20 @@ NeuroDoc is a multi-functional GenAI assistant that helps students and professio
 | Layer       | Tech Used                                  |
 |-------------|---------------------------------------------|
 | **Frontend**| Streamlit                                   |
-| **LLMs**    | Groq (Mixtral / LLaMA), Gemini Pro (Google) |
+| **LLMs**    | Groq (LLaMA), Gemini Pro (Google) |
 | **Embeddings** | GoogleGenerativeAIEmbeddings via LangChain |
 | **Vector Store** | FAISS (in-memory for now)              |
 | **Speech**  | gTTS (Google Text-to-Speech)                |
 | **Backend** | Python + LangChain + OpenRouter             |
 
 ---
+
+## 🔍 Use Cases:
+Academic research and learning
+
+Corporate report summarization
+
+Training content generation for educators
+
+
+
