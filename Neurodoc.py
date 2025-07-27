@@ -9,6 +9,7 @@ from langchain_community.document_loaders import (
     UnstructuredWordDocumentLoader,
     UnstructuredURLLoader
 )
+from gtts import gTTS
 from dotenv import load_dotenv
 from langchain_community.document_loaders import DirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -184,6 +185,12 @@ with tab1:
              file_name="summary_from_pdf.txt",
              mime="text/plain"
              )
+             text1=summary.content
+             if st.button("Convert to Speech"):
+                tts = gTTS(text1)
+                tts.save("output.mp3")
+                st.audio("output.mp3", format="audio/mp3")
+
            
             
 
@@ -207,7 +214,11 @@ with tab1:
              mime="text/plain",
              key=f"download_mcqs_txt_{uploaded_file.name}" 
              )
-           
+             text2=mcqs.content
+             if st.button("Convert to Speech"):
+               tts = gTTS(text2)
+               tts.save("output.mp3")
+               st.audio("output.mp3", format="audio/mp3")
             
 
     elif option == "Ask a Question":
@@ -243,6 +254,12 @@ with tab1:
             trans_chain= prompt3|llm
             result=trans_chain.invoke({"text":summary,"language":language})
             st.write(result.content)
+            text3=result.content
+            if st.button("Convert to Speech"):
+               tts = gTTS(text3)
+               tts.save("output.mp3")
+               st.audio("output.mp3", format="audio/mp3")
+
 
 
 
