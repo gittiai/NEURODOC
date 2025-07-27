@@ -1,39 +1,39 @@
+# 🧠 NeuroDoc — AI-Powered Study & Research Assistant
 
-NeuroDoc is an AI-powered document intelligence and research assistant built using GenAI, RAG (Retrieval-Augmented Generation), and Agentic AI principles. It helps users interact intelligently with complex documents like PDFs, Word files, PowerPoint decks, and even web pages .
+NeuroDoc is a multi-functional GenAI assistant that helps students and professionals extract knowledge from documents, websites, and more. It summarizes content, generates MCQs, and even converts summaries to speech — powered by top-tier LLMs and embeddings.
 
-It can perform the following key tasks:
+> "Learn smarter, not harder — with AI on your side."
 
-📄 Smart Document Q&A: Upload PDFs, DOCX, PPTX, or TXT files and ask contextual questions. Powered by chunking, embeddings, and vector search (FAISS or Chroma).
+---
 
-📚 Summarization Engine: Generates concise and structured summaries of large documents or transcribed YouTube videos.
+## ✨ Key Features
 
-❓ MCQ Generator: Automatically creates multiple-choice questions from academic material or corporate reports – great for educators, students, and trainers.
+- 📄 **Document Summarization**  
+  Upload PDFs, PPTs, Word, or Text files — get crisp, AI-generated summaries using Gemini and Groq.
 
-🌐 Web Q&A: Ask questions about the contents of any public website link using web scraping and summarization tools.
+- 🌐 **Website Summarizer**  
+  Paste any URL — NeuroDoc fetches and summarizes page content using LangChain's WebLoader.
 
-🧠 Memory-Enhanced Chatbot: Ongoing context-aware conversations with memory-enabled LLM agents.
+- ❓ **MCQ Generator**  
+  Auto-generate multiple-choice questions from text or documents — great for self-evaluation.
 
-🧾 Multimodal & Hybrid RAG: Combines both keyword and vector search. Multimodal RAG extends support for images, tables, and visual documents (planned/ongoing).
+- 🧠 **RAG + Embedding Search** *(NEW)*  
+  Google Embedding-powered vector store retrieves accurate content chunks before summarization or QA.
 
-💼 Use Cases: Academic study assistant, corporate document analyzer, legal brief summarizer, policy compliance checker, and more.
+- 🔊 **Text-to-Speech (TTS)**  
+  Generate audio of summaries using gTTS. Adjust playback speed, download MP3, and learn on the go.
 
-Tech Stack:
+---
 
-🔧 LangChain, FAISS/Chroma, LangGraph, LLM (OpenAI/Gemini), Streamlit
+## 🔧 Tech Stack
 
-🌐 Backend via FastAPI
+| Layer       | Tech Used                                  |
+|-------------|---------------------------------------------|
+| **Frontend**| Streamlit                                   |
+| **LLMs**    | Groq (Mixtral / LLaMA), Gemini Pro (Google) |
+| **Embeddings** | GoogleGenerativeAIEmbeddings via LangChain |
+| **Vector Store** | FAISS (in-memory for now)              |
+| **Speech**  | gTTS (Google Text-to-Speech)                |
+| **Backend** | Python + LangChain + OpenRouter             |
 
-🧩 Embeddings: OpenAI, Sentence Transformers
-
-🧠 Agents: ReAct + Custom Tools
-
-💾 Document Loaders: PyMuPDF, Unstructured, Docx2txt
-
-🧱 Deployment: Streamlit Cloud
-
-🔍 Use Cases:
-Academic research and learning
-
-Corporate report summarization
-
-Training content generation for educators
+---
