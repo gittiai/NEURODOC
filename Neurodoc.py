@@ -105,7 +105,7 @@ st.markdown(
 )
 
 load_dotenv()
-groq_api_key = =os.getenv("GROQ_API_KEY")
+groq_api_key = os.getenv("GROQ_API_KEY")
 
 st.sidebar.markdown("## 📘 Instructions")
 st.sidebar.markdown("""
