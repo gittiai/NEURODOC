@@ -6,7 +6,9 @@ langchain-community
 tiktoken
 python-docx
 pytube
-
+gTTS
+langgraph
+google-generativeai
 youtube-transcript-api
 unstructured
 beautifulsoup4
@@ -18,5 +20,10 @@ python-multipart
 chromadb
 pypdf
 PyYAML
+langchain-google-genai
+langchain-groq
+langchain-ollama
+langgraph
+
 
 
