@@ -350,7 +350,7 @@ with tab3:
 with st.expander("# 🤖 NEUROBUDDY : Ask Me Anything!"):
  from langgraph.graph import StateGraph, START, END
  from typing import TypedDict, Annotated
- from langchain_core.messages import BaseMessage,AIMessage
+ from langchain_core.messages import BaseMessage,AIMessage,HumanMessage
  from langgraph.checkpoint.memory import InMemorySaver
  from langgraph.graph.message import add_messages
   
