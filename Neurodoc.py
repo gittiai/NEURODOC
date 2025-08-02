@@ -107,18 +107,7 @@ st.markdown(
 load_dotenv()
 groq_api_key = os.getenv("GROQ_API_KEY")
 
-st.sidebar.markdown("## 📘 Instructions")
-st.sidebar.markdown("""
-1. Upload a document (`.pdf`, `.pptx`, `.txt`, `.docx`)
-2. Choose an action:
-   - Generate Summary
-   - Generate MCQs
-   - Ask a Question
-3. For Q&A, type your question in the box.
-4. Use this prompt->(Answer the question using the context provided, and include the file name and page number as the source)  to find file name and page no            
-5. You can also Upload Image for Q/A """)
-
-
+st.sidebar.markdown("##NEUROBUDDY")
 
 llm = ChatGroq(model="llama-3.1-8b-instant", groq_api_key=groq_api_key)
 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
@@ -309,7 +298,9 @@ if "conversation" not in st.session_state:
         memory=st.session_state.chat_memory,
         verbose=False
     )
-    
+
+
+
 with tab3:
     os.environ["GOOGLE_API_KEY"] = os.getenv("GEMINI_API_KEY")
     genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
@@ -347,7 +338,7 @@ with tab3:
      answer = qa_chain.run(question)
      st.write(answer)
 
-with st.expander("# 🤖 NEUROBUDDY : Ask Me Anything!"):
+with st.sidebar:
  from langgraph.graph import StateGraph, START, END
  from typing import TypedDict, Annotated
  from langchain_core.messages import BaseMessage,AIMessage,HumanMessage
