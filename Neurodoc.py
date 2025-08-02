@@ -53,8 +53,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-  
-
 st.markdown(
     """
     <style>
@@ -71,7 +69,7 @@ st.markdown(
 
 Theme = st.sidebar.selectbox("🌗 Select Theme", ["Dark", "Azure", "Tree", "Sunset","Moon"])
 
-if Theme == "Dark":
+if Theme == "Moon":
     bg_color = "#0e1117"
     text_color = "#ffffff"
 elif Theme == "Azure":
@@ -83,7 +81,7 @@ elif Theme == "Tree":
 elif Theme=="Sunset":
    bg_color = "#f1a05e"
    text_color = "#D45A09"
-elif Theme=="Moon":
+elif Theme=="Dark":
     bg_color ="#ffffff"
     text_color= "#000000"
 
@@ -107,7 +105,7 @@ st.markdown(
 load_dotenv()
 groq_api_key = os.getenv("GROQ_API_KEY")
 
-st.sidebar.markdown("##NEUROBUDDY")
+st.sidebar.markdown("NEUROBUDDY - (Your Personal Chatbot) ")
 
 llm = ChatGroq(model="llama-3.1-8b-instant", groq_api_key=groq_api_key)
 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
