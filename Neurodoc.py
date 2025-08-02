@@ -27,7 +27,6 @@ from langchain_ollama import OllamaEmbeddings
 from langchain_groq import ChatGroq
 from PIL import Image
 import google.generativeai as genai
-from youtube_transcript_api import YouTubeTranscriptApi
 import streamlit as st
 load_dotenv()
 
@@ -105,14 +104,8 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-
 load_dotenv()
-
-
-st.sidebar.markdown("## 🔐 Enter API Key")
-with st.sidebar:
-    groq_api_key = st.text_input("🔑 Groq API Key", value=os.getenv("GROQ_API_KEY", ""), type="password")
+groq_api_key = =os.getenv("GROQ_API_KEY")
 
 st.sidebar.markdown("## 📘 Instructions")
 st.sidebar.markdown("""
@@ -190,11 +183,6 @@ with tab1:
                 tts = gTTS(text1)
                 tts.save("output.mp3")
                 st.audio("output.mp3", format="audio/mp3")
-
-           
-            
-
-
 
     elif option == "Generate MCQs":
             joined_text = "\n".join([doc.page_content for doc in all_chunks])
@@ -289,7 +277,7 @@ with tab2:
                 st.write(output_summary)
 
         except Exception as e:
-            st.exception(f"⚠️ Exception: {e}")
+            st.exception(f" Exception: {e}")
 
     prompt_template2 = """
     Generate 10 multiple choice questions using the following content from a  webpage transcript:
@@ -359,21 +347,55 @@ with tab3:
      answer = qa_chain.run(question)
      st.write(answer)
 
-st.markdown("# 🤖 NEUROBUDDY" )
-question = st.text_input("Chat with NeuroBuddy")
-if st.button("Submit Question 🚀") and question:
-    with st.spinner("Thinking..."):
-        response = st.session_state.conversation.run(question)
-        st.markdown(f"**Answer:** {response}")
-with st.expander("🧠 Chat History", expanded=False):
- if st.session_state.chat_memory:
-    for msg in st.session_state.chat_memory.chat_memory.messages:
+with st.expander("# 🤖 NEUROBUDDY : Ask Me Anything!"):
+ from langgraph.graph import StateGraph, START, END
+ from typing import TypedDict, Annotated
+ from langchain_core.messages import BaseMessage,AIMessage
+ from langgraph.checkpoint.memory import InMemorySaver
+ from langgraph.graph.message import add_messages
+  
+ class ChatState(TypedDict):
+    messages: Annotated[list[BaseMessage], add_messages]
 
-        if msg.type == "human":
-            st.markdown(f"🧑‍💻 You: {msg.content}")
-        elif msg.type == "ai":
-            st.markdown(f"🤖 Neurobuddy: {msg.content}")
-if st.button("🧹 Clear Chat History"):
-    st.session_state.chat_memory.clear()
-    st.success("Chat history cleared.")
+ def chat_node(state: ChatState):
+    messages = state['messages']
+    response = llm.invoke(messages)
+    return {"messages": [response]}
+     
+ checkpointer = InMemorySaver()
+
+ graph = StateGraph(ChatState)
+ graph.add_node("chat_node", chat_node)
+ graph.add_edge(START, "chat_node")
+ graph.add_edge("chat_node", END)
+
+ chatbot = graph.compile(checkpointer=checkpointer)
+
+ CONFIG = {'configurable': {'thread_id': 'thread-1'}}
+
+ if 'message_history' not in st.session_state:
+    st.session_state['message_history'] = []
+
+ for message in st.session_state['message_history']:
+    with st.chat_message(message['role']):
+        st.text(message['content'])
+
+ user_input = st.chat_input("Type here")
+
+ if user_input:
+    st.chat_message("user").text(user_input)
+    st.session_state['message_history'].append({'role': 'user', 'content': user_input})
+     
+    chat_history = []
+    for msg in st.session_state['message_history']:
+        if msg['role'] == 'user':
+            chat_history.append(HumanMessage(content=msg['content']))
+        elif msg['role'] == 'assistant':
+            chat_history.append(AIMessage(content=msg['content']))
+    response = chatbot.invoke({'messages': chat_history}, config=CONFIG)
+
+    ai_message = response['messages'][-1].content
+    st.chat_message("assistant").text(ai_message)
+    st.session_state['message_history'].append({'role': 'assistant', 'content': ai_message})
+
 
