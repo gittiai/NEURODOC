@@ -178,8 +178,8 @@ with tab1:
              file_name="summary_from_pdf.txt",
              mime="text/plain"
              )
-             text1=summary.content
-             if st.button("Convert to Speech"):
+            text1=summary.content
+            if st.button("Convert to Speech"):
                 tts = gTTS(text1)
                 tts.save("output.mp3")
                 st.audio("output.mp3", format="audio/mp3")
@@ -202,8 +202,8 @@ with tab1:
              mime="text/plain",
              key=f"download_mcqs_txt_{uploaded_file.name}" 
              )
-             text2=mcqs.content
-             if st.button("Convert to Speech"):
+            text2=mcqs.content
+            if st.button("Convert to Speech"):
                tts = gTTS(text2)
                tts.save("output.mp3")
                st.audio("output.mp3", format="audio/mp3")
