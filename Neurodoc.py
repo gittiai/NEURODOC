@@ -300,16 +300,6 @@ with tab2:
             st.exception(f"⚠️ Exception: {e}")
 
 
-if "chat_memory" not in st.session_state:
-    st.session_state.chat_memory = ConversationBufferMemory(return_messages=True)
-if "conversation" not in st.session_state:    
-    st.session_state.conversation = ConversationChain(
-        llm=llm,
-        memory=st.session_state.chat_memory,
-        verbose=False
-    )
-
-
 
 with tab3:
     os.environ["GOOGLE_API_KEY"] = os.getenv("GEMINI_API_KEY")
