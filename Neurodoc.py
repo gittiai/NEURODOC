@@ -336,6 +336,7 @@ with tab3:
      answer = qa_chain.run(question)
      st.write(answer)
 
+"""
 with st.sidebar:
  from langgraph.graph import StateGraph, START, END
  from typing import TypedDict, Annotated
@@ -386,5 +387,5 @@ with st.sidebar:
     ai_message = response['messages'][-1].content
     st.chat_message("assistant").text(ai_message)
     st.session_state['message_history'].append({'role': 'assistant', 'content': ai_message})
-
+"""
 
