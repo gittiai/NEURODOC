@@ -121,9 +121,9 @@ st.sidebar.markdown("""
 
 llm = ChatGroq(model="llama-3.1-8b-instant", groq_api_key=groq_api_key)
 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-tab1, tab2 ,tab3 = st.tabs(["DOCUMENTS", "WEBSITE" ,"IMAGE"])
+tab1, tab2 ,tab3 , tab4 = st.tabs(["DOCUMENTS", "WEBSITE" ,"IMAGE","AUDIO"])
 with tab1:
-  st.header("DOCUMENT")
+  st.header("📃 DOCUMENT")
 
   uploaded_files = st.file_uploader("📂 Upload a Document", type=["pdf", "pptx", "txt", "docx"],accept_multiple_files=True)
 
@@ -252,7 +252,7 @@ with tab1:
 
 
 with tab2:
-    st.header("WEBSITE")
+    st.header("🌐 WEBSITE")
     st.subheader("Paste a Website URL below to get a summary:")
     generic_url = st.text_input("URL", label_visibility="collapsed", placeholder="Enter a  Website URL")
     
@@ -306,7 +306,7 @@ with tab3:
     genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
 
-    st.title(" IMAGE ")
+    st.title("🏞️ IMAGE ")
 
     uploaded_file = st.file_uploader("📄 Upload an image", type=["jpg", "jpeg", "png"])
     question = st.text_input("💬 Ask a question about the image")
@@ -337,4 +337,48 @@ with tab3:
    
      answer = qa_chain.run(question)
      st.write(answer)
+
+
+with tab4:
+   from langchain_ollama import OllamaEmbeddings
+   import assemblyai as aai
+   GROQ_API_KEY=os.getenv("GROQ_API_KEY")
+   ASSEMBLYAI_API_KEY = os.getenv("ASSEMBLYAI_API_KEY")  
+   load_dotenv()
+   aai.settings.api_key = os.getenv("ASSEMBLYAI_API_KEY")
+   st.title("🎧 Audio Q&A ")
+
+   uploaded_file = st.file_uploader("📤 Upload an audio file (MP3, WAV, M4A)", type=["mp3", "wav", "m4a"])
+   question = st.text_input("💬 Ask a question about the audio")
+
+   if uploaded_file and question:
+    st.audio(uploaded_file)
+
+    with open("temp_audio.mp3", "wb") as f:
+        f.write(uploaded_file.read())
+
+    st.info("🔍 Transcribing audio....")
+
+    transcriber = aai.Transcriber()
+    transcript_obj = transcriber.transcribe("temp_audio.mp3")
+    transcript = transcript_obj.text
+
+    st.subheader("📄 Transcript")
+    st.write(transcript)
+
+    splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    docs = splitter.split_text(transcript)
+    
+    #embeddings = OllamaEmbeddings(model="nomic-embed-text")
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+    vectordb = FAISS.from_texts(docs, embedding=embeddings)
+
+    llm = ChatGroq(model="llama-3.1-8b-instant")
+    retriever = vectordb.as_retriever()
+    qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
+
+    answer = qa_chain.run(question)
+    st.subheader("🧠 Answer")
+    st.write(answer)
+
 
