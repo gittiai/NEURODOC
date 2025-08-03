@@ -346,7 +346,7 @@ with tab4:
    ASSEMBLYAI_API_KEY = os.getenv("ASSEMBLYAI_API_KEY")  
    load_dotenv()
    aai.settings.api_key = os.getenv("ASSEMBLYAI_API_KEY")
-   st.title("🎧 Audio Q&A ")
+   st.title("🎧 Audio  ")
 
    uploaded_file = st.file_uploader("📤 Upload an audio file (MP3, WAV, M4A)", type=["mp3", "wav", "m4a"])
    question = st.text_input("💬 Ask a question about the audio")
