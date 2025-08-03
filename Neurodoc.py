@@ -105,7 +105,19 @@ st.markdown(
 load_dotenv()
 groq_api_key = os.getenv("GROQ_API_KEY")
 
-st.sidebar.markdown("NEUROBUDDY - (Your Personal Chatbot) ")
+
+st.sidebar.markdown("## 📘 Instructions")
+st.sidebar.markdown("""
+1. Upload a document (`.pdf`, `.pptx`, `.txt`, `.docx`)
+2. Choose an action:
+   - Generate Summary
+   - Generate MCQs
+   - Ask a Question
+3. For Q&A, type your question in the box.
+4. Use this prompt->(Answer the question using the context provided, and include the file name and page number as the source)  to find file name and page no            
+5. Upload Correct URL from Yoytube video 
+""")
+
 
 llm = ChatGroq(model="llama-3.1-8b-instant", groq_api_key=groq_api_key)
 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
