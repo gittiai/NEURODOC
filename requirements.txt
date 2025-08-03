@@ -12,6 +12,7 @@ google-generativeai
 youtube-transcript-api
 unstructured
 beautifulsoup4
+assemblyai
 requests
 streamlit
 fastapi
