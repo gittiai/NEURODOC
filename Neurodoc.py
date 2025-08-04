@@ -108,14 +108,23 @@ groq_api_key = os.getenv("GROQ_API_KEY")
 
 st.sidebar.markdown("## 📘 Instructions")
 st.sidebar.markdown("""
-1. Upload a document (`.pdf`, `.pptx`, `.txt`, `.docx`)
-2. Choose an action:
+🧠 NeuroDoc -
+Your AI-powered companion to read, listen, see — and understand.
+
+✨Because your content deserves answers✨
+
+ Upload a document (`.pdf`, `.pptx`, `.txt`, `.docx`)
+   Choose an action:
    - Generate Summary
    - Generate MCQs
    - Ask a Question
-3. For Q&A, type your question in the box.
-4. Use this prompt->(Answer the question using the context provided, and include the file name and page number as the source)  to find file name and page no            
-5. Upload Correct URL from Yoytube video 
+🌐 Websites → Paste a link, get insights, ask away.
+                    
+🖼️ Images → Scan, summarize, and explore visually.
+                    
+🎧 Audio → Transcribe, summarize, and question spoken words.
+
+⚡ Just drop it in — NeuroDoc does the thinking.
 """)
 
 
