@@ -116,6 +116,7 @@ Your AI-powered companion to read, listen, see — and understand.
    - Generate Summary
    - Generate MCQs
    - Ask a Question
+   
 🌐 Websites → Paste a link, get insights, ask away.
                     
 🖼️ Images → Scan, summarize, and explore visually.
