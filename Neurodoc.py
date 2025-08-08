@@ -127,7 +127,7 @@ Your AI-powered companion to read, listen, see — and understand.
 """)
 
 
-llm = ChatGroq(model="llama-3.1-8b-instant", groq_api_key=groq_api_key)
+llm = ChatGroq(model="openai/gpt-oss-20b", groq_api_key=groq_api_key)
 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 tab1, tab2 ,tab3 , tab4 = st.tabs(["DOCUMENTS", "WEBSITE" ,"IMAGE","AUDIO"])
 with tab1:
