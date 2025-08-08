@@ -381,7 +381,8 @@ with tab4:
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
     vectordb = FAISS.from_texts(docs, embedding=embeddings)
 
-    llm = ChatGroq(model="llama-3.1-8b-instant")
+    #llm = ChatGroq(model="llama-3.1-8b-instant")
+    llm = ChatGroq(model="openai/gpt-oss-20b") 
     retriever = vectordb.as_retriever()
     qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
 
