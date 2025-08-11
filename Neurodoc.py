@@ -323,8 +323,8 @@ with tab3:
      image = Image.open(uploaded_file)
      st.image(image,use_container_width=True)
 
-     model = genai.GenerativeModel("gemini-2.5-pro")
-
+     #model = genai.GenerativeModel("gemini-2.5-pro")
+     model = genai.GenerativeModel("gemini-1.5-flash")
      response = model.generate_content(
         ["Extract all useful and meaningful information from this image.", image],
         stream=False
@@ -338,7 +338,8 @@ with tab3:
      embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
      vectordb = FAISS.from_texts(docs, embedding=embeddings)
 
-     llm = GoogleGenerativeAI(model="gemini-2.5-pro")
+     #llm =GoogleGenerativeAI(model="gemini-2.5-pro")
+     llm=ChatGroq(model="openai/gpt-oss-20b")
      retriever=vectordb.as_retriever()
      qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
 
